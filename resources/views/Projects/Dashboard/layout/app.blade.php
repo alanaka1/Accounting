@@ -1,11 +1,11 @@
 <!doctype html>
-@include('Projects.Dashboard.Sass.dir')
+@include('Projects.Sass.dir')
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>@yield('title')</title>
 
-  @include('Projects.Dashboard.Sass.css')
+  @include('Projects.Sass.css')
 
     <!-- Main + direction stylesheet -->
     <link rel="stylesheet" href="{{ asset('Projects/Dashboard/css/style.css') }}">
@@ -47,7 +47,7 @@
   </div>
 </div>
 
-@include('Projects.Dashboard.Sass.javascript')
+@include('Projects.Sass.javascript')
 <script src="{{ asset('Projects/Dashboard/js/javascript.js') }}"></script>
 @yield('javascript')
 </body>
