@@ -1,0 +1,418 @@
+/* =========================================================
+   AUTH VARIABLES
+========================================================= */
+
+:root {
+    --auth-bg: #f4f7fc;
+    --auth-surface: #ffffff;
+    --auth-surface-soft: #f8fafc;
+    --auth-border: #e3e8f0;
+    --auth-text: #0f172a;
+    --auth-muted: #748094;
+    --auth-primary: #0d6efd;
+    --auth-primary-hover: #0b5ed7;
+    --auth-shadow:
+        0 22px 55px rgba(15, 23, 42, 0.10);
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+[data-bs-theme="dark"] {
+    --auth-bg: #0d1117;
+    --auth-surface: #161b22;
+    --auth-surface-soft: #1d242d;
+    --auth-border: #2b3541;
+    --auth-text: #f0f4f8;
+    --auth-muted: #99a4b3;
+    --auth-shadow:
+        0 22px 55px rgba(0, 0, 0, 0.35);
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    color: var(--auth-text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--auth-bg);
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.auth-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow: hidden;
+    background:radial-gradient( circle at top left, rgba(99, 102, 241, 0.12), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.08), transparent 30%),
+        var(--auth-bg);
+}
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.auth-container {
+    width: 100%;
+    max-width: 390px;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.auth-brand {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 auto 22px;
+    color: var(--auth-text);
+}
+
+.auth-brand:hover {
+    color: var(--auth-text);
+}
+
+.auth-brand-icon {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 40px;
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 1rem;
+    background:linear-gradient(135deg, #6366f1, #2563eb);
+    box-shadow:0 8px 20px rgba(37, 99, 235, 0.22);
+}
+
+.auth-brand-name {
+    color: var(--auth-text);
+    font-size: 1.18rem;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.auth-card {
+    overflow: hidden;
+    border: 1px solid var(--auth-border);
+    border-radius: 16px;
+    background: var(--auth-surface);
+    box-shadow: var(--auth-shadow);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.auth-card-header {
+    padding: 26px 25px 17px;
+    text-align: center;
+}
+
+.auth-card-header h1 {
+    margin: 0 0 6px;
+    color: var(--auth-text);
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.auth-card-header p {
+    margin: 0;
+    color: var(--auth-muted);
+    font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.auth-card-body {
+    padding: 7px 25px 25px;
+}
+
+
+/* =========================================================
+   FORM LABEL
+========================================================= */
+
+.auth-card .form-label {
+    margin-bottom: 5px;
+    color: var(--auth-text);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   FORM CONTROL
+========================================================= */
+
+.auth-card .form-control-sm {
+    min-height: 36px;
+    border-color: var(--auth-border);
+    background-color: var(--auth-surface);
+    color: var(--auth-text);
+    font-size: 0.78rem;
+}
+
+.auth-card .form-control-sm::placeholder {
+    color: var(--auth-muted);
+    opacity: 0.65;
+}
+
+.auth-card .form-control-sm:focus {
+    border-color: #6366f1;
+    background-color: var(--auth-surface);
+    color: var(--auth-text);
+    box-shadow: 0 0 0 0.15rem rgba(99, 102, 241, 0.10);
+}
+
+
+/* =========================================================
+   INPUT GROUP
+========================================================= */
+
+.auth-card .input-group-text {
+    width: 36px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-color: var(--auth-border);
+    background: var(--auth-surface-soft);
+    color: var(--auth-muted);
+    font-size: 0.72rem;
+}
+
+
+/* =========================================================
+   PASSWORD BUTTON
+========================================================= */
+
+.password-toggle {
+    width: 36px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--auth-border);
+    background: var(--auth-surface-soft);
+    color: var(--auth-muted);
+    font-size: 0.74rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.password-toggle:hover {
+    background: var(--auth-surface-soft);
+    color: var(--auth-primary);
+}
+
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+.auth-link {
+    color: #6366f1;
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.auth-link:hover {
+    color: #4f46e5;
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   REMEMBER
+========================================================= */
+
+.auth-remember {
+    margin: 16px 0 18px;
+}
+
+.auth-remember .form-check-input {
+    margin-top: 0.16rem;
+    border-color: var(--auth-border);
+    cursor: pointer;
+}
+
+.auth-remember .form-check-input:checked {
+    border-color: var(--auth-primary);
+    background-color: var(--auth-primary);
+}
+
+.auth-remember .form-check-label {
+    color: var(--auth-text);
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   SUBMIT
+========================================================= */
+
+.auth-submit {
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border-radius: 4px;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.auth-btn-icon {
+    font-size: 0.72rem;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.auth-card-footer {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--auth-border);
+    background: var(--auth-surface-soft);
+    color: var(--auth-muted);
+    font-size: 0.72rem;
+}
+
+
+/* =========================================================
+   THEME BUTTON
+========================================================= */
+
+.theme-toggle {
+    position: fixed;
+    top: 18px;
+    inset-inline-end: 18px;
+    z-index: 100;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--auth-border);
+    border-radius: 10px;
+    background: var(--auth-surface);
+    color: var(--auth-text);
+    font-size: 0.8rem;
+    box-shadow: 0 5px 15px rgba(15, 23, 42, 0.04);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.theme-toggle:hover {
+    background: var(--auth-surface-soft);
+    color: var(--auth-primary);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   DARK FIXES
+========================================================= */
+
+[data-bs-theme="dark"] .auth-card .form-control-sm {
+    background: var(--auth-surface);
+    color: var(--auth-text);
+}
+
+[data-bs-theme="dark"] .auth-card .input-group-text,
+[data-bs-theme="dark"] .password-toggle {
+    background: var(--auth-surface-soft);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .auth-page {
+        padding: 16px;
+    }
+
+    .auth-container {
+        max-width: 100%;
+    }
+
+    .auth-brand {
+        margin-bottom: 18px;
+    }
+
+    .auth-card {
+        border-radius: 14px;
+    }
+
+    .auth-card-header {
+        padding: 23px 20px 16px;
+    }
+
+    .auth-card-body {
+        padding: 6px 20px 22px;
+    }
+
+    .auth-card-header h1 {
+        font-size: 1.25rem;
+    }
+
+    .theme-toggle {
+        top: 14px;
+        inset-inline-end: 14px;
+    }
+}
