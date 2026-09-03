@@ -29,4 +29,24 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function currencies()
+    {
+        return $this->hasMany(Currency::class);
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function currencyTransfers()
+    {
+        return $this->hasMany(CurrencyTransfer::class);
+    }
 }

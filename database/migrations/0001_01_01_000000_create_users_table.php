@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\{Schema, DB, Hash};
 
 return new class extends Migration
 {
@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->unsignedTinyInteger('status')->default(1);
             $table->rememberToken();
             $table->timestamps();
         });
@@ -35,6 +36,17 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        DB::table('users')->insert(
+            array([
+                'name'       => 'Mahmoud',
+                'email'      => 'Mahmoud@admin.com',
+                'password'   => Hash::make('12345678'),
+                'status'     => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]),
+        );
     }
 
     /**
