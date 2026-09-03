@@ -3,6 +3,8 @@
 namespace App\Models\Project\Accounting;
 
 use App\Models\User;
+use App\Models\Project\Accounting\Transaction;
+use Illuminate\Database\Eloquent\{Model, SoftDeletes};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Category extends Model

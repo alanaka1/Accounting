@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Project\Accounting;
 
-use App\Models\Project\Accounting\Transaction;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Project\Accounting\Transaction;
 
 class TransactionController extends Controller
 {

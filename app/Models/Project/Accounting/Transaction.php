@@ -2,11 +2,14 @@
 
 namespace App\Models\Project\Accounting;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use Illuminate\Database\Eloquent\{Model, SoftDeletes};
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Project\Accounting\{Category, Currency, CurrencyTransfer};
 
 class Transaction extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [ 'user_id', 'currency_id', 'category_id', 'type', 'amount', 'description', 'transaction_date', 'note', 'transfer_id'];
 

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Project\Accounting;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Project\Accounting\CategoryRequest;
-use App\Models\Project\Accounting\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Project\Accounting\Category;
+use App\Http\Requests\Project\Accounting\CategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -15,7 +15,7 @@ class CategoryController extends Controller
         $this->middleware(['auth']);
 
         // إذا كان middleware الصلاحيات موجوداً عندك استخدم:
-        // $this->middleware(['auth', 'roles']);
+        $this->middleware(['auth', 'roles']);
     }
     /**
      * Display a listing of the resource.
@@ -25,7 +25,7 @@ class CategoryController extends Controller
         // $categories = auth()->user()->categories()->latest()->paginate(10);
 
         $categories = Category::where('user_id', Auth::id())->orderBy('id', 'DESC')->get();
-        return view('categories.index', compact('categories'));
+        return view('accounting.categories.index', compact('categories'));
     }
 
     /**
@@ -33,7 +33,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('categories.create');
+        return view('Project.Accounting.Category.form');
     }
 
     /**
@@ -43,16 +43,16 @@ class CategoryController extends Controller
     {
          try {
             Category::create([
-                'user_id'    => Auth::id(),
-                'name'       => $request->name,
-                'type'       => $request->type,
-                'description' => $request->description,
-                'is_active'  => 1,
+                'user_id'       => Auth::id(),
+                'name'          => $request->name,
+                'type'          => $request->type,
+                'description'   => $request->description,
+                'status'        => $data['status'] ?? 1,
             ]);
 
-            return redirect(route('categories.index'))->with(['success' => 'تمت إضافة التصنيف بنجاح']);
+            return redirect(route('accounting.categories.index'))->with(['success' => 'تمت إضافة التصنيف بنجاح']);
         } catch (\Exception $ex) {
-            return redirect(route('categories.index'))->with(['error' => 'حدثت مشكلة أثناء إضافة التصنيف',]);
+            return redirect(route('accounting.categories.index'))->with(['error' => 'حدثت مشكلة أثناء إضافة التصنيف',]);
         }
     }
 
@@ -64,63 +64,64 @@ class CategoryController extends Controller
         $category = Category::where('user_id', Auth::id())->find($category);
         if (!$category) {
 
-            return redirect(route('categories.index'))->with(['error' => 'التصنيف المطلوب غير موجود']);
+            return redirect(route('Project.Accounting.Category.index'))->with(['error' => 'التصنيف المطلوب غير موجود']);
         }
-        return view('categories.show', compact('category'));
+        return view('Project.Accounting.Category.show', compact('category'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit($category)
     {
         $category = Category::where('user_id', Auth::id())->find($category);
 
         if (!$category) {
-            return redirect(route('categories.index'))->with(['error' => 'التصنيف المطلوب غير موجود']);
+            return redirect(route('Project.Accounting.Category.index'))->with(['error' => 'التصنيف المطلوب غير موجود']);
         }
-        return view('categories.form', compact('category'));
+        return view('Project.Accounting.Category.form', compact('category'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(CategoryRequest $request, $category)
     {
         try {
             $category = Category::where('user_id', Auth::id())->find($category);
 
             if (!$category) {
-                return redirect(route('categories.index'))->with(['error' => 'التصنيف المطلوب غير موجود',]);
+                return redirect(route('accounting.categories.index'))->with(['error' => 'التصنيف المطلوب غير موجود',]);
             }
 
             $category->update([
                 'name'        => $request->name,
                 'type'        => $request->type,
                 'description' => $request->description,
+                'status'      => $data['status'] ?? $category->status,
             ]);
 
-            return redirect(route('categories.index'))->with(['success' => 'تم تعديل التصنيف بنجاح']);
+            return redirect(route('accounting.categories.index'))->with(['success' => 'تم تعديل التصنيف بنجاح']);
         } catch (\Exception $ex) {
-            return redirect(route('categories.index'))->with(['error' => 'حدثت مشكلة أثناء تعديل التصنيف']);
+            return redirect(route('accounting.categories.index'))->with(['error' => 'حدثت مشكلة أثناء تعديل التصنيف']);
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy($category)
     {
         try {
             $category = Category::where('user_id', Auth::id())->find($category);
 
             if (!$category) {
-                return redirect(route('categories.index'))->with(['error' => 'التصنيف المطلوب غير موجود']);
+                return redirect(route('accounting.categories.index'))->with(['error' => 'التصنيف المطلوب غير موجود']);
             }
             $category->delete();
-            return redirect(route('categories.index'))->with(['success' => 'تم حذف التصنيف بنجاح']);
+            return redirect(route('accounting.categories.index'))->with(['success' => 'تم حذف التصنيف بنجاح']);
         } catch (\Exception $ex) {
-            return redirect(route('categories.index'))->with(['error' => 'حدثت مشكلة أثناء حذف التصنيف']);
+            return redirect(route('accounting.categories.index'))->with(['error' => 'حدثت مشكلة أثناء حذف التصنيف']);
         }
     }
 
@@ -130,14 +131,13 @@ class CategoryController extends Controller
     public function updateStatus($id)
     {
         try {
-            $category = Category::where('user_id', Auth::id())
-                ->find($id);
+            $category = Category::where('user_id', Auth::id())->find($id);
 
             if (!$category) {
-                return redirect(route('categories.index'))->with(['error' => 'التصنيف المطلوب غير موجود']);
+                return redirect(route('accounting.categories.index'))->with(['error' => 'التصنيف المطلوب غير موجود']);
             }
 
-            $category->update(['is_active' => !$category->is_active]);
+            $category->update(['status' => $category->status == 1 ? 0 : 1]);
 
             if ($category->is_active) {
                 $message = 'تم تفعيل التصنيف بنجاح';
@@ -145,9 +145,19 @@ class CategoryController extends Controller
                 $message = 'تم تعطيل التصنيف بنجاح';
             }
 
-            return redirect(route('categories.index'))->with(['success' => $message]);
+            return redirect(route('accounting.categories.index'))->with(['success' => $message]);
         } catch (\Exception $ex) {
-            return redirect(route('categories.index'))->with(['error' => 'حدثت مشكلة أثناء تغيير حالة التصنيف']);
+            return redirect(route('accounting.categories.index'))->with(['error' => 'حدثت مشكلة أثناء تغيير حالة التصنيف']);
         }
+    }
+
+     /**
+     * Display deleted categories.
+     */
+    public function trash()
+    {
+        $categories = Category::onlyTrashed()->where('user_id', Auth::id())->orderBy('deleted_at', 'DESC')->get();
+
+        return view('Project.Accounting.Category.trash', compact('categories'));
     }
 }

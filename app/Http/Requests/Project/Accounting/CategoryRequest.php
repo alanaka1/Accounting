@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Project\Accounting;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
+// use Illuminate\Contracts\Validation\ValidationRule;
 
 class CategoryRequest extends FormRequest
 {
@@ -12,7 +14,7 @@ class CategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,8 +24,27 @@ class CategoryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $categoryId = $this->route('id') ?? $this->route('category');
+
+        if (is_object($categoryId)) {
+            $categoryId = $categoryId->id;
+        }
+
         return [
-            //
+            'name' => [ 'required', 'string', 'max:100',
+
+                Rule::unique('categories', 'name')
+                    ->where(function ($query) {
+                        return $query
+                            ->where('user_id', Auth::id())
+                            ->where('type', $this->type);
+                    })
+                    ->ignore($categoryId),
+            ],
+
+            'type' => ['required', Rule::in(['receipt', 'payment']),],
+            'description' => [ 'nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'integer', 'in:0,1',],
         ];
     }
 }

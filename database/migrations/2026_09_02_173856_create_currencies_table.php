@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('decimal_places')->default(2);
             $table->boolean('is_default')->default(false);
             $table->unsignedTinyInteger('status')->default(1);
+            $table->softDeletes();
             $table->timestamps();
             $table->unique(['user_id', 'code']);
         });

@@ -3,12 +3,13 @@
 namespace App\Models\Project\Accounting;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\{Model, SoftDeletes};
+use App\Models\Project\Accounting\{CurrencyTransfer, Transaction};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Currency extends Model
 {
-        use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = ['user_id', 'name', 'code', 'symbol', 'decimal_places', 'is_default', 'status'];
 

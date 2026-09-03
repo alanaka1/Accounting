@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->date('transaction_date');
             $table->text('note')->nullable();
+            $table->unsignedTinyInteger('status')->default(1);
             /*
              * إذا الحركة ناتجة عن تحويل عملة
              * يتم ربطها بعملية التحويل.
@@ -28,6 +29,7 @@ return new class extends Migration
              * الحركات العادية تكون NULL.
              */
             $table->foreignId('transfer_id')->nullable()->constrained('currency_transfers')->cascadeOnDelete();
+            $table->softDeletes();
             $table->timestamps();
             $table->index(['user_id', 'currency_id', 'type', 'transaction_date']);
         });
