@@ -11,7 +11,7 @@ class Transaction extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [ 'user_id', 'currency_id', 'category_id', 'type', 'amount', 'description', 'transaction_date', 'note', 'transfer_id'];
+    protected $fillable = ['user_id', 'currency_id', 'category_id', 'type', 'amount', 'description', 'transaction_date', 'note', 'transfer_id', 'status', /*'payment_method',*/];
 
     protected $casts = [
         'amount' => 'decimal:4',
@@ -46,5 +46,10 @@ class Transaction extends Model
     public function scopePayments($query)
     {
         return $query->where('type', 'payment');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
     }
 }

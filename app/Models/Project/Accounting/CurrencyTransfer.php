@@ -39,4 +39,9 @@ class CurrencyTransfer extends Model
     {
         return $this->hasMany(Transaction::class, 'transfer_id');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
+    }
 }

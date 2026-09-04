@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('currency_id')->constrained('currencies')->restrictOnDelete();
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->enum('type', ['receipt', 'payment']);
+            // $table->enum('payment_method', ['cash', 'card', 'bank_transfer'])->default('cash');
             $table->decimal('amount', 18, 4);
             $table->string('description')->nullable();
             $table->date('transaction_date');
