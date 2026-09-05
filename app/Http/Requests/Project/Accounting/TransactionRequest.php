@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Project\Accounting;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\ValidationRule;
 
 class TransactionRequest extends FormRequest
 {
@@ -24,11 +26,11 @@ class TransactionRequest extends FormRequest
     {
         return [
 
-            'currency_id' => ['required', 'integer',
-                Rule::exists('currencies', 'id')->where(function ($query) {
+            'account_id' => ['required', 'integer',
+                Rule::exists('accounts', 'id')->where(function ($query) {
                         return $query->where('user_id', Auth::id())->whereNull('deleted_at');
                     }),
-            ],
+        ],
 
             'category_id' => ['nullable', 'integer',
                 Rule::exists('categories', 'id')->where(function ($query) {
@@ -49,18 +51,18 @@ class TransactionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'currency_id.required' =>'العملة مطلوبة.',
-            'currency_id.exists' =>'العملة المحددة غير موجودة.',
-            'category_id.exists' =>'التصنيف المحدد غير صحيح أو لا يتوافق مع نوع الحركة.',
-            'type.required' =>'نوع الحركة مطلوب.',
-            'type.in' =>'نوع الحركة يجب أن يكون مقبوضات أو مدفوعات.',
-            'amount.required' =>'المبلغ مطلوب.',
-            'amount.numeric' =>'المبلغ يجب أن يكون رقماً.',
-            'amount.gt' =>'المبلغ يجب أن يكون أكبر من صفر.',
-            'description.max' =>'البيان يجب ألا يتجاوز 255 حرف.',
+            'account_id.required'       => 'الحساب مطلوب.',
+            'account_id.exists'         => 'الحساب المحدد غير موجود.',
+            'category_id.exists'        =>'التصنيف المحدد غير صحيح أو لا يتوافق مع نوع الحركة.',
+            'type.required'             =>'نوع الحركة مطلوب.',
+            'type.in'                   =>'نوع الحركة يجب أن يكون مقبوضات أو مدفوعات.',
+            'amount.required'           =>'المبلغ مطلوب.',
+            'amount.numeric'            =>'المبلغ يجب أن يكون رقماً.',
+            'amount.gt'                 =>'المبلغ يجب أن يكون أكبر من صفر.',
+            'description.max'           =>'البيان يجب ألا يتجاوز 255 حرف.',
             'transaction_date.required' =>'تاريخ الحركة مطلوب.',
-            'transaction_date.date' =>'تاريخ الحركة غير صحيح.',
-            'status.in' =>'حالة الحركة غير صحيحة.',
+            'transaction_date.date'     =>'تاريخ الحركة غير صحيح.',
+            'status.in'                 =>'حالة الحركة غير صحيحة.',
         ];
     }
 }

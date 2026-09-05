@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Project\Accounting;
+namespace App\Http\Controllers\Projects\Accounting;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Project\Accounting\{Transaction, Currency, Category};
+use App\Models\Project\Accounting\{Transaction, Currency, Category, Account};
 use App\Http\Requests\Project\Accounting\TransactionRequest;
 
 class TransactionController extends Controller
@@ -43,12 +43,12 @@ class TransactionController extends Controller
             $type = null;
         }
 
-        $currencies = Currency::where('user_id', Auth::id())->where('status', 1)->orderBy('code')->get();
+        $accounts = Account::with(['bank', 'currency'])->where('user_id', Auth::id())->where('status', 1)->orderBy('name')->get();
         $categories = Category::where('user_id', Auth::id())->where('status', 1)->when($type, function ($query) use ($type) {
                 $query->where('type', $type);
             })->orderBy('name')->get();
 
-        return view('Project.Accounting.Transaction.form',compact('currencies', 'categories', 'type'));
+        return view('Project.Accounting.Transaction.form',compact('accounts', 'categories', 'type'));
     }
 
     /**
@@ -58,9 +58,12 @@ class TransactionController extends Controller
     {
         $data = $request->validated();
 
+        $account = Account::where('user_id', Auth::id())->findOrFail($data['account_id']);
+
         Transaction::create([
             'user_id'           => Auth::id(),
-            'currency_id'       => $data['currency_id'],
+            'account_id'        => $account->id,
+            'currency_id'       => $account->currency_id,
             'category_id'       => $data['category_id'] ?? null,
             'type'              => $data['type'],
             // 'payment_method'    => $data['payment_method'],
@@ -86,7 +89,7 @@ class TransactionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Transaction $transaction)
+    public function edit($transaction)
     {
         $transaction = Transaction::where('user_id', Auth::id())->findOrFail($transaction);
 
@@ -99,11 +102,11 @@ class TransactionController extends Controller
             return redirect(route('accounting.currency-transfers.edit', $transaction->transfer_id))->with('error', 'هذه الحركة مرتبطة بتحويل عملة، يجب تعديل التحويل نفسه.');
         }
 
-        $currencies = Currency::where('user_id', Auth::id())->orderBy('code')->get();
+        $accounts   = Account::with(['bank', 'currency'])->where('user_id', Auth::id())->where('status', 1)->orderBy('name')->get();
         $categories = Category::where('user_id', Auth::id())->where('type', $transaction->type)->orderBy('name')->get();
         $type = $transaction->type;
 
-        return view('Project.Accounting.Transaction.form', compact('transaction', 'currencies', 'categories', 'type'));
+        return view('Project.Accounting.Transaction.form', compact('transaction', 'accounts', 'categories', 'type'));
     }
 
     /**
@@ -114,23 +117,26 @@ class TransactionController extends Controller
          $transaction = Transaction::where('user_id', Auth::id())->findOrFail($transaction);
 
         if ($transaction->transfer_id) {
-
-            return redirect()->route('accounting.currency-transfers.edit',$transaction->transfer_id)->with('error','لا يمكن تعديل حركة مرتبطة بتحويل عملة من هنا.');
+            return redirect()->route('accounting.currency-transfers.edit', $transaction->transfer_id)->with('error', 'لا يمكن تعديل حركة مرتبطة بتحويل عملة من هنا.');
         }
 
         $data = $request->validated();
 
+        $account = Account::where('user_id', Auth::id())
+            ->findOrFail($data['account_id']);
+
         $transaction->update([
-            'currency_id'       => $data['currency_id'],
+            'account_id'        => $account->id,
+            'currency_id'       => $account->currency_id,
             'category_id'       => $data['category_id'] ?? null,
             'type'              => $data['type'],
-            // 'payment_method'    => $data['payment_method'],
             'amount'            => $data['amount'],
             'description'       => $data['description'] ?? null,
             'transaction_date'  => $data['transaction_date'],
             'note'              => $data['note'] ?? null,
             'status'            => $data['status'] ?? $transaction->status,
         ]);
+
 
         return redirect(route('accounting.transactions.index'))->with('success', 'تم تعديل الحركة المالية بنجاح.');
     }

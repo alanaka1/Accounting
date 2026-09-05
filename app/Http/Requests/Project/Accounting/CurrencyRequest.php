@@ -58,17 +58,17 @@ class CurrencyRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'اسم العملة مطلوب.',
-            'name.max' => 'اسم العملة يجب ألا يتجاوز 100 حرف.',
-            'code.required' => 'رمز العملة مطلوب.',
-            'code.max' => 'رمز العملة يجب ألا يتجاوز 10 أحرف.',
-            'code.unique' => 'هذه العملة موجودة مسبقاً.',
-            'symbol.max' => 'رمز العملة يجب ألا يتجاوز 10 أحرف.',
-            'decimal_places.required' => 'عدد المنازل العشرية مطلوب.',
-            'decimal_places.integer' => 'عدد المنازل العشرية يجب أن يكون رقماً صحيحاً.',
-            'decimal_places.min' => 'عدد المنازل العشرية لا يمكن أن يكون أقل من صفر.',
-            'decimal_places.max' => 'عدد المنازل العشرية لا يمكن أن يتجاوز 8.',
-            'status.in' => 'حالة العملة غير صحيحة.',
+            'name.required'             => 'اسم العملة مطلوب.',
+            'name.max'                  => 'اسم العملة يجب ألا يتجاوز 100 حرف.',
+            'code.required'             => 'رمز العملة مطلوب.',
+            'code.max'                  => 'رمز العملة يجب ألا يتجاوز 10 أحرف.',
+            'code.unique'               => 'هذه العملة موجودة مسبقاً.',
+            'symbol.max'                => 'رمز العملة يجب ألا يتجاوز 10 أحرف.',
+            'decimal_places.required'   => 'عدد المنازل العشرية مطلوب.',
+            'decimal_places.integer'    => 'عدد المنازل العشرية يجب أن يكون رقماً صحيحاً.',
+            'decimal_places.min'        => 'عدد المنازل العشرية لا يمكن أن يكون أقل من صفر.',
+            'decimal_places.max'        => 'عدد المنازل العشرية لا يمكن أن يتجاوز 8.',
+            'status.in'                 => 'حالة العملة غير صحيحة.',
         ];
     }
 }

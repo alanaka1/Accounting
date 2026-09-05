@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Project\Accounting;
+namespace App\Http\Controllers\Projects\Accounting;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -12,8 +12,6 @@ class CategoryController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth']);
-
         // إذا كان middleware الصلاحيات موجوداً عندك استخدم:
         $this->middleware(['auth', 'roles']);
     }
@@ -42,11 +40,14 @@ class CategoryController extends Controller
     public function store(CategoryRequest $request)
     {
          try {
+
+            $data = $request->validated();
+
             Category::create([
                 'user_id'       => Auth::id(),
                 'name'          => $request->name,
                 'type'          => $request->type,
-                'description'   => $request->description,
+                'description' => $data['description'] ?? null,
                 'status'        => $data['status'] ?? 1,
             ]);
 
@@ -94,10 +95,12 @@ class CategoryController extends Controller
                 return redirect(route('accounting.categories.index'))->with(['error' => 'التصنيف المطلوب غير موجود',]);
             }
 
+            $data = $request->validated();
+
             $category->update([
                 'name'        => $request->name,
                 'type'        => $request->type,
-                'description' => $request->description,
+                'description' => $data['description'] ?? null,
                 'status'      => $data['status'] ?? $category->status,
             ]);
 
@@ -131,19 +134,18 @@ class CategoryController extends Controller
     public function updateStatus($id)
     {
         try {
-            $category = Category::where('user_id', Auth::id())->find($id);
+            $category = Category::where('user_id', Auth::id())
+                ->find($id);
 
             if (!$category) {
+
                 return redirect(route('accounting.categories.index'))->with(['error' => 'التصنيف المطلوب غير موجود']);
             }
 
-            $category->update(['status' => $category->status == 1 ? 0 : 1]);
+            $newStatus = $category->status == 1 ? 0 : 1;
+            $category->update(['status' => $newStatus]);
 
-            if ($category->is_active) {
-                $message = 'تم تفعيل التصنيف بنجاح';
-            } else {
-                $message = 'تم تعطيل التصنيف بنجاح';
-            }
+            $message = $newStatus == 1 ? 'تم تفعيل التصنيف بنجاح' : 'تم تعطيل التصنيف بنجاح';
 
             return redirect(route('accounting.categories.index'))->with(['success' => $message]);
         } catch (\Exception $ex) {

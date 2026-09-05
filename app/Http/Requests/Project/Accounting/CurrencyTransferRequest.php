@@ -26,17 +26,16 @@ class CurrencyTransferRequest extends FormRequest
     {
         return [
 
-            'from_currency_id' => [ 'required', 'integer',
-                Rule::exists('currencies', 'id')->where(function ($query) {
-                        return $query->where('user_id', Auth::id());
+            'from_account_id' => ['required', 'integer',
+                Rule::exists('accounts', 'id')->where(function ($query) {
+                        return $query->where('user_id', Auth::id())->whereNull('deleted_at');
                     }),
             ],
 
             'from_amount' => [ 'required', 'numeric', 'gt:0'],
-            'to_currency_id' => [ 'required', 'integer', 'different:from_currency_id',
-
-                Rule::exists('currencies', 'id')->where(function ($query) {
-                        return $query->where('user_id', Auth::id());
+            'to_account_id' => ['required', 'integer', 'different:from_account_id',
+                Rule::exists('accounts', 'id')->where(function ($query) {
+                        return $query->where('user_id', Auth::id())->whereNull('deleted_at');
                     }),
             ],
 
@@ -52,23 +51,23 @@ class CurrencyTransferRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'from_currency_id.required' =>'العملة المراد التحويل منها مطلوبة.',
-            'from_currency_id.exists' =>'العملة المراد التحويل منها غير موجودة.',
-            'from_amount.required' =>'المبلغ المراد تحويله مطلوب.',
-            'from_amount.numeric' =>'مبلغ التحويل يجب أن يكون رقماً.',
-            'from_amount.gt' =>'مبلغ التحويل يجب أن يكون أكبر من صفر.',
-            'to_currency_id.required' =>'العملة المراد التحويل إليها مطلوبة.',
-            'to_currency_id.exists' =>'العملة المراد التحويل إليها غير موجودة.',
-            'to_currency_id.different' =>'لا يمكن التحويل من العملة إلى نفس العملة.',
-            'to_amount.required' =>'المبلغ المستلم مطلوب.',
-            'to_amount.numeric' =>'المبلغ المستلم يجب أن يكون رقماً.',
-            'to_amount.gt' =>'المبلغ المستلم يجب أن يكون أكبر من صفر.',
-            'exchange_rate.numeric' =>'سعر الصرف يجب أن يكون رقماً.',
-            'exchange_rate.gt' =>'سعر الصرف يجب أن يكون أكبر من صفر.',
-            'transfer_date.required' =>'تاريخ التحويل مطلوب.',
-            'transfer_date.date' =>'تاريخ التحويل غير صحيح.',
-            'description.max' =>'البيان يجب ألا يتجاوز 255 حرف.',
-            'status.in' =>'حالة التحويل غير صحيحة.',
+            'from_account_id.required'  => 'الحساب المراد التحويل منه مطلوب.',
+            'from_account_id.exists'    => 'الحساب المراد التحويل منه غير موجود.',
+            'from_amount.required'      => 'المبلغ المراد تحويله مطلوب.',
+            'from_amount.numeric'       => 'مبلغ التحويل يجب أن يكون رقماً.',
+            'from_amount.gt'            => 'مبلغ التحويل يجب أن يكون أكبر من صفر.',
+            'to_account_id.required'    => 'الحساب المراد التحويل إليه مطلوب.',
+            'to_account_id.exists'      => 'الحساب المراد التحويل إليه غير موجود.',
+            'to_account_id.different'   => 'يجب اختيار حساب مختلف للتحويل إليه.',
+            'to_amount.required'        => 'المبلغ المستلم مطلوب.',
+            'to_amount.numeric'         => 'المبلغ المستلم يجب أن يكون رقماً.',
+            'to_amount.gt'              => 'المبلغ المستلم يجب أن يكون أكبر من صفر.',
+            'exchange_rate.numeric'     => 'سعر الصرف يجب أن يكون رقماً.',
+            'exchange_rate.gt'          => 'سعر الصرف يجب أن يكون أكبر من صفر.',
+            'transfer_date.required'    => 'تاريخ التحويل مطلوب.',
+            'transfer_date.date'        => 'تاريخ التحويل غير صحيح.',
+            'description.max'           => 'البيان يجب ألا يتجاوز 255 حرف.',
+            'status.in'                 => 'حالة التحويل غير صحيحة.',
         ];
     }
 }

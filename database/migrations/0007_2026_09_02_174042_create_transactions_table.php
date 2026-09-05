@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('currency_id')->constrained('currencies')->restrictOnDelete();
+            $table->foreignId('account_id')->constrained('accounts')->restrictOnDelete();
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+            $table->foreignId('currency_id')->constrained('currencies')->restrictOnDelete();
+            $table->foreignId('transfer_id')->nullable()->constrained('currency_transfers')->cascadeOnDelete();
             $table->enum('type', ['receipt', 'payment']);
             // $table->enum('payment_method', ['cash', 'card', 'bank_transfer'])->default('cash');
             $table->decimal('amount', 18, 4);
@@ -29,7 +31,6 @@ return new class extends Migration
              *
              * الحركات العادية تكون NULL.
              */
-            $table->foreignId('transfer_id')->nullable()->constrained('currency_transfers')->cascadeOnDelete();
             $table->softDeletes();
             $table->timestamps();
             $table->index(['user_id', 'currency_id', 'type', 'transaction_date']);

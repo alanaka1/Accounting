@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Project\Accounting;
+namespace App\Http\Controllers\Projects\Accounting;
 
 // use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\{Auth, DB};
-use App\Models\Project\Accounting\CurrencyTransfer;
-use App\Models\Project\Accounting\{Transaction, Currency};
+use App\Models\Project\Accounting\{Transaction, Currency, Account, CurrencyTransfer};
 use App\Http\Requests\Project\Accounting\CurrencyTransferRequest;
 
 class CurrencyTransferController extends Controller
@@ -30,8 +29,8 @@ class CurrencyTransferController extends Controller
      */
     public function create()
     {
-        $currencies = Currency::where('user_id', Auth::id())->where('status', 1)->orderBy('code')->get();
-        return view('Project.Accounting.CurrencyTransfer.form', compact('currencies'));
+        $accounts = Account::with(['bank', 'currency'])->where('user_id', Auth::id())->where('status', 1)->orderBy('name')->get();
+        return view('Project.Accounting.CurrencyTransfer.form', compact('accounts'));
     }
 
     /**
@@ -43,17 +42,20 @@ class CurrencyTransferController extends Controller
 
             $data = $request->validated();
 
-            /*
-             * 1 FROM = X TO
-             */
+            $fromAccount = Account::where('user_id', Auth::id())->findOrFail($data['from_account_id']);
+            $toAccount = Account::where('user_id', Auth::id())->findOrFail($data['to_account_id']);
+
+            /** 1 FROM = X TO */
             $exchangeRate = $data['exchange_rate']
                 ?? ($data['to_amount'] / $data['from_amount']);
 
             $transfer = CurrencyTransfer::create([
                 'user_id'          => Auth::id(),
-                'from_currency_id' => $data['from_currency_id'],
+                'from_account_id'  => $fromAccount->id,
+                'from_currency_id' => $fromAccount->currency_id,
                 'from_amount'      => $data['from_amount'],
-                'to_currency_id'   => $data['to_currency_id'],
+                'to_account_id'    => $toAccount->id,
+                'to_currency_id'   => $toAccount->currency_id,
                 'to_amount'        => $data['to_amount'],
                 'exchange_rate'    => $exchangeRate,
                 'transfer_date'    => $data['transfer_date'],
@@ -67,7 +69,8 @@ class CurrencyTransferController extends Controller
              */
             Transaction::create([
                 'user_id'          => Auth::id(),
-                'currency_id'      => $transfer->from_currency_id,
+                'account_id'       => $fromAccount->id,
+                'currency_id'      => $fromAccount->currency_id,
                 'category_id'      => null,
                 'type'             => 'payment',
                 'amount'           => $transfer->from_amount,
@@ -82,7 +85,8 @@ class CurrencyTransferController extends Controller
              */
             Transaction::create([
                 'user_id'          => Auth::id(),
-                'currency_id'      => $transfer->to_currency_id,
+                'account_id'       => $toAccount->id,
+                'currency_id'      => $toAccount->currency_id,
                 'category_id'      => null,
                 'type'             => 'receipt',
                 'amount'           => $transfer->to_amount,
@@ -110,9 +114,9 @@ class CurrencyTransferController extends Controller
     public function edit($currencyTransfer)
     {
         $transfer = CurrencyTransfer::where('user_id', Auth::id())->findOrFail($currencyTransfer);
-        $currencies = Currency::where('user_id', Auth::id())->where('status', 1)->orderBy('code')->get();
+        $accounts = Account::with(['bank', 'currency'])->where('user_id', Auth::id())->where('status', 1)->orderBy('name')->get();
 
-        return view('Project.Accounting.CurrencyTransfer.form', compact('transfer', 'currencies'));
+        return view('Project.Accounting.CurrencyTransfer.form', compact('transfer', 'accounts'));
     }
 
     /**
@@ -126,37 +130,36 @@ class CurrencyTransferController extends Controller
         
         {
             $data = $request->validated();
+
+            $fromAccount = Account::where('user_id', Auth::id())->findOrFail($data['from_account_id']);
+            $toAccount = Account::where('user_id', Auth::id())->findOrFail($data['to_account_id']);
             $exchangeRate = $data['exchange_rate'] ?? ($data['to_amount'] / $data['from_amount']);
+                
+                /** تحديث حركة المدفوع **/
+
             $transfer->update([
-                'from_currency_id' => $data['from_currency_id'],
-                'from_amount' => $data['from_amount'],
-                'to_currency_id' => $data['to_currency_id'],
-                'to_amount' => $data['to_amount'],
-                'exchange_rate' => $exchangeRate,
-                'transfer_date' => $data['transfer_date'],
-                'description' => $data['description'] ?? null,
-                'note' => $data['note'] ?? null,
-                'status' => $data['status'] ?? $transfer->status,
+                'from_account_id'  => $fromAccount->id,
+                'from_currency_id' => $fromAccount->currency_id,
+                'from_amount'      => $data['from_amount'],
+                'to_account_id'    => $toAccount->id,
+                'to_currency_id'   => $toAccount->currency_id,
+                'to_amount'        => $data['to_amount'],
+                'exchange_rate'    => $exchangeRate,
+                'transfer_date'    => $data['transfer_date'],
+                'description'      => $data['description'] ?? null,
+                'note'             => $data['note'] ?? null,
+                'status'           => $data['status'] ?? $transfer->status,
             ]);
-
-            /** تحديث حركة المدفوع **/
-
-            Transaction::where('transfer_id', $transfer->id)->where('type', 'payment')->update([
-                    'currency_id' => $transfer->from_currency_id,
-                    'amount' => $transfer->from_amount,
-                    'description' => $transfer->description ?? 'تحويل عملة',
-                    'transaction_date' => $transfer->transfer_date,
-                    'note' => $transfer->note,
-                ]);
 
             /** تحديث حركة المقبوض **/
 
             Transaction::where('transfer_id', $transfer->id)->where('type', 'receipt')->update([
-                    'currency_id' => $transfer->to_currency_id,
-                    'amount' => $transfer->to_amount,
-                    'description' => $transfer->description ?? 'تحويل عملة',
-                    'transaction_date' => $transfer->transfer_date,
-                    'note' => $transfer->note,
+                    'account_id'        => $toAccount->id,
+                    'currency_id'       => $toAccount->currency_id,
+                    'amount'            => $transfer->to_amount,
+                    'description'       => $transfer->description ?? 'تحويل عملة',
+                    'transaction_date'  => $transfer->transfer_date,
+                    'note'              => $transfer->note,
                 ]);
         });
 

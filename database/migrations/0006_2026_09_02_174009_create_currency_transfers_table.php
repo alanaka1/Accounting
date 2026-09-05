@@ -18,13 +18,16 @@ return new class extends Migration
             $table->foreignId('from_currency_id')->constrained('currencies')->restrictOnDelete();
             $table->decimal('from_amount', 18, 4);
             // العملة التي استلمتها
+            $table->foreignId('from_account_id')->constrained('accounts')->restrictOnDelete();
             $table->foreignId('to_currency_id')->constrained('currencies')->restrictOnDelete();
+            $table->foreignId('to_account_id')->constrained('accounts')->restrictOnDelete();
             $table->decimal('to_amount', 18, 4);
             // سعر الصرف
             $table->decimal('exchange_rate', 20, 8)->nullable();
             $table->date('transfer_date');
             $table->string('description')->nullable();
             $table->text('note')->nullable();
+            $table->unsignedTinyInteger('status')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\{Route, Auth};
 use App\Http\Controllers\Projects\Auth\AuthController;
-use App\Http\Controllers\Project\Accounting\{CurrencyController, CategoryController, CurrencyTransferController, TransactionController};
+use App\Http\Controllers\Projects\Accounting\{CurrencyController, CategoryController, CurrencyTransferController, TransactionController};
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,23 +33,24 @@ Route::group(['prefix' => 'admin'], function (){
             Route::get('/', 'index')->name('index');                        // accounting.currencies.index
             Route::get('create', 'create')->name('create');                 // accounting.currencies.create
             Route::post('store', 'store')->name('store');                   // accounting.currencies.store
+            Route::get('trash', 'trash')->name('trash');                    // accounting.currencies.trash
             Route::get('{id}/edit', 'edit')->name('edit');                  // accounting.currencies.edit
             Route::put('{id}/update', 'update')->name('update');            // accounting.currencies.update
             Route::delete('{id}/destroy', 'destroy')->name('destroy');      // accounting.currencies.destroy
             Route::patch('{id}/status', 'updateStatus')->name('status');    // accounting.currencies.status
-            Route::get('trash', 'trash')->name('trash');                    // accounting.currencies.trash
         });
         
         /************************************************** Categories **************************************************/
         Route::group(['prefix' => 'categories', 'as' => 'categories.', 'controller' => CategoryController::class], function () {
+
             Route::get('/', 'index')->name('index');                        // accounting.categories.index
             Route::get('create', 'create')->name('create');                 // accounting.categories.create
             Route::post('store', 'store')->name('store');                   // accounting.categories.store
+            Route::get('trash', 'trash')->name('trash');                    // accounting.categories.trash
             Route::get('{id}/edit', 'edit')->name('edit');                  // accounting.categories.edit
             Route::put('{id}/update', 'update')->name('update');            // accounting.categories.update
             Route::delete('{id}/destroy', 'destroy')->name('destroy');      // accounting.categories.destroy
             Route::patch('{id}/status', 'updateStatus')->name('status');    // accounting.categories.status
-            Route::get('trash', 'trash')->name('trash');                    // accounting.categories.trash
         });
     
         /************************************************** Currency Transfers **************************************************/
@@ -70,10 +71,10 @@ Route::group(['prefix' => 'admin'], function (){
             Route::get('/', 'index')->name('index');                        /* accounting.transactions.index */
             Route::get('create', 'create')->name('create');                 /* accounting.transactions.create */
             Route::post('store', 'store')->name('store');                   /* accounting.transactions.store */
+            Route::get('trash', 'trash')->name('trash');                    /* accounting.transactions.trash */
             Route::get('{id}/edit', 'edit')->name('edit');                  /* accounting.transactions.edit */
             Route::put('{id}/update', 'update')->name('update');            /* accounting.transactions.update */
             Route::delete('{id}/destroy', 'destroy')->name('destroy');      /* accounting.transactions.destroy */
-            Route::get('trash', 'trash')->name('trash');                    /* accounting.transactions.trash */
             Route::patch('{id}/status', 'updateStatus')->name('status');    /* accounting.transactions.status */
 
             /* index - create - store - edit -update -destroy */
